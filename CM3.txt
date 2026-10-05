@@ -1,0 +1,22 @@
+Add SECURITY.md, fix broken coverage script, pin the package manager
+
+Release-readiness fixes found during the production gate review.
+
+Fixes
+  test:coverage was advertised in package.json and README but failed with
+  "MISSING DEPENDENCY '@vitest/coverage-v8'". Added the dev dependency;
+  coverage now reports 69.23% statements / 65.47% branches.
+
+  npm ci cannot work on this repo: there is no package-lock.json, and
+  npm 10.9.8 crashes generating one for this workspace layout
+  ("Cannot read properties of null (reading 'matches')"). bun.lock is the
+  committed lockfile and `bun install --frozen-lockfile` verified reproducible
+  from a clean clone. README now pins bun and states plainly that npm ci does
+  not work, rather than implying npm install is a supported CI path.
+
+Documentation
+  SECURITY.md records the actual security posture: the SSRF guard's blocked
+  ranges and DNS-rebinding handling, the auth model, and — stated plainly —
+  the gaps that are not yet implemented (no API rate limiting, no security
+  response headers on the API, no lockout, no dependency scanning, CORS must be
+  set explicitly).

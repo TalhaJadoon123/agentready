@@ -32,11 +32,18 @@ clients need **no API keys at all**.
 ## Quick start
 
 ```bash
-git clone <your-repo> agentready
+git clone https://github.com/TalhaJadoon123/agentready.git
 cd agentready
-npm install
+
+# bun is the pinned package manager — bun.lock is the committed lockfile.
+bun install --frozen-lockfile     # reproducible; `npm install` also works
 npm run build
 ```
+
+> **Package manager:** `bun.lock` is the committed lockfile. For a reproducible
+> or CI install use `bun install --frozen-lockfile`. `npm ci` does **not** work
+> — there is no `package-lock.json`, and npm's lockfile generator crashes on this
+> workspace layout.
 
 Run the demo — a reference e-commerce store with a live MCP server, plus the whole pipeline:
 
