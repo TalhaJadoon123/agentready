@@ -1,0 +1,28 @@
+name = "agentready-api"
+main = "packages/api/dist/server.js"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Cloudflare Workers free tier: 100,000 requests/day.
+#
+# Deploy with: npx wrangler deploy --config docker/wrangler.api.toml
+#
+# Secrets (set with `wrangler secret put NAME`, never in this file):
+#   GROQ_API_KEY, CLOUDFLARE_API_TOKEN, SMITHERY_API_KEY,
+#   MCP_REGISTRY_GITHUB_TOKEN, RESEND_API_KEY, AUTH_SECRET,
+#   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
+
+[vars]
+NODE_ENV = "production"
+LOG_LEVEL = "info"
+WEB_ORIGIN = "https://agentready.pages.dev"
+# Without a database the API writes to /tmp, which is ephemeral. For a real
+# deployment either set the Supabase variables or bind a KV namespace.
+AGENTREADY_DB_PATH = "/tmp/agentready.json"
+AUTO_MIGRATE = "false"
+
+[observability]
+enabled = true
+
+# Note: the API keeps quota state in its store, so a single instance is assumed.
+# Scaling out requires moving the store to Supabase first.

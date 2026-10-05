@@ -1,0 +1,85 @@
+# AgentReady — full local stack
+#
+#   docker compose -f docker/docker-compose.yml up -d --build
+#   open http://localhost:3000
+#
+# Everything runs on free tiers. No API keys are required: without them the
+# scanner, MCP generation, schema generation and publishing all still work;
+# only real agent simulation and remote deploys are disabled.
+
+name: agentready
+
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.api
+    container_name: agentready-api
+    restart: unless-stopped
+    ports:
+      - "8787:8787"
+    environment:
+      NODE_ENV: production
+      PORT: "8787"
+      LOG_LEVEL: info
+      WEB_ORIGIN: http://localhost:3000
+      # File store by default. Set SUPABASE_* to switch to Supabase.
+      AGENTREADY_DB_PATH: /app/data/agentready.json
+      AUTO_MIGRATE: "false"
+      # ---- optional integrations (all free tier, all optional) ----
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      GROQ_MODEL: ${GROQ_MODEL:-llama-3.3-70b-versatile}
+      SUPABASE_URL: ${SUPABASE_URL:-}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:-}
+      CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN:-}
+      CLOUDFLARE_ACCOUNT_ID: ${CLOUDFLARE_ACCOUNT_ID:-}
+      SMITHERY_API_KEY: ${SMITHERY_API_KEY:-}
+      MCP_REGISTRY_GITHUB_TOKEN: ${MCP_REGISTRY_GITHUB_TOKEN:-}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      AUTH_SECRET: ${AUTH_SECRET:-dev-secret-change-me}
+    volumes:
+      - agentready-data:/app/data
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8787/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  web:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.web
+    container_name: agentready-web
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      API_BASE: http://api:8787
+      SITE_URL: http://localhost:3000
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # The demo e-commerce site with a live MCP server. Scan it to see a top score.
+  demo:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.demo
+    container_name: agentready-demo
+    restart: unless-stopped
+    ports:
+      - "8790:8790"
+    environment:
+      DEMO_PORT: "8790"
+      DEMO_ORIGIN: http://localhost:8790
+
+volumes:
+  agentready-data:

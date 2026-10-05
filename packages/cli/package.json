@@ -1,0 +1,25 @@
+{
+  "name": "@agentready/cli",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": { ".": { "types": "./dist/index.d.ts", "default": "./dist/index.js" } },
+  "bin": {
+    "agentready": "./bin/agentready.mjs"
+  },
+  "files": ["dist", "bin"],
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "tsc -b --clean"
+  },
+  "dependencies": {
+    "@agentready/shared": "1.0.0",
+    "@agentready/core": "1.0.0",
+    "@agentready/schema": "1.0.0",
+    "@agentready/mcp": "1.0.0",
+    "@agentready/registry": "1.0.0",
+    "@agentready/verify": "1.0.0"
+  }
+}

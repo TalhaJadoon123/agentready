@@ -1,0 +1,11 @@
+{
+  "name": "@agentready/seed",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Demo e-commerce site with a live MCP server, plus the end-to-end seed pipeline. Plain JavaScript — no build step.",
+  "scripts": {
+    "start": "node src/seed.mjs",
+    "site": "node src/demo-site.mjs"
+  }
+}

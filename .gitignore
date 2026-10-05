@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+.npm/
+
+# Build output
+dist/
+build/
+.next/
+out/
+coverage/
+*.tsbuildinfo
+
+# Local data written by the API's file store
+data/
+
+# Lockfiles other than the one we ship
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Secrets — never commit these
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Editor and OS noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Logs
+*.log
+npm-debug.log*

@@ -1,0 +1,15 @@
+id,name,sku,category,price,currency,availability,brand,description,ram,storage,capacity
+atlas-laptop-14,Atlas 14" Field Laptop,NW-ATLAS-14,Computing,1299.00,USD,InStock,Northwind Supply,A 14-inch laptop built for outdoor and mobile work.,32GB,1TB NVMe SSD,
+atlas-laptop-16,Atlas 16" Field Laptop,NW-ATLAS-16,Computing,1799.00,USD,InStock,Northwind Supply,The 16-inch Atlas for work that needs a real keyboard.,32GB,1TB NVMe SSD,
+titan-powerbank-100,Titan 100W Power Bank,NW-TITAN-100,Power,129.00,USD,InStock,Northwind Supply,A 27,000mAh power bank that charges a laptop at 100W.,, ,27000mAh
+titan-powerbank-65,Titan 65W Power Bank,NW-TITAN-65,Power,79.00,USD,InStock,Northwind Supply,A smaller 15,000mAh bank that still charges a laptop at 65W.,,,15000mAh
+solarfold-panel,SolarFold 60W Panel,NW-SOLAR-60,Power,189.00,USD,BackOrder,Northwind Supply,A folding 60W solar panel with USB-C PD output.,,,60000mW
+pelican-case-20,Pelican 20L Field Case,NW-PELICAN-20,Protection,89.00,USD,InStock,Northwind Supply,A hard-shell case with a custom foam insert.,,,20L
+pelican-case-45,Pelican 45L Field Case,NW-PELICAN-45,Protection,139.00,USD,InStock,Northwind Supply,The 45-litre version for full-day kits.,,,45L
+stormproof-rain-shell,Stormproof Rain Shell,NW-STORM-M,Apparel,249.00,USD,InStock,Northwind Supply,A three-layer waterproof shell rated to 20,000mm.,,,20000mm
+stormproof-rain-pants,Stormproof Rain Trousers,NW-STORMP-M,Apparel,159.00,USD,InStock,Northwind Supply,Full-length side zips so you can get them on over boots.,,,20000mm
+grip-gloves,Grip Gloves (Pairs),NW-GRIP-L,Apparel,39.00,USD,InStock,Northwind Supply,Cut-resistant level C gloves with a nitrile palm.,,,Level C
+braided-usbc-cable-2m,Braided USB-C Cable 2m,NW-CBL-2M,Cabling,24.00,USD,InStock,Northwind Supply,A 240W-rated USB-C cable with a braided sheath.,,,240W
+braided-usbc-cable-05,Braided USB-C Cable 0.5m,NW-CBL-05,Cabling,14.00,USD,InStock,Northwind Supply,A 30cm cable for charging at a desk.,,,240W
+ethernet-cable-10m,Shielded Ethernet Cable 10m,NW-ETH-10,Cabling,42.00,USD,OutOfStock,Northwind Supply,Cat6A shielded cable for fixed installations.,,,Cat6A
+hdmi-2-1-cable-2m,HDMI 2.1 Cable 2m,NW-HDMI-2M,Cabling,29.00,USD,PreOrder,Northwind Supply,Certified Ultra High Speed HDMI 2.1 cable.,,,48Gbps

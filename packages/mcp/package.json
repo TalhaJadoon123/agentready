@@ -1,0 +1,21 @@
+{
+  "name": "@agentready/mcp",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": { "types": "./dist/index.d.ts", "default": "./dist/index.js" },
+    "./generator": { "types": "./dist/generator.d.ts", "default": "./dist/generator.js" }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "tsc -b --clean"
+  },
+  "dependencies": {
+    "@agentready/shared": "1.0.0",
+    "@agentready/schema": "1.0.0"
+  }
+}

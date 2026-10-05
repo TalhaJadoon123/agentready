@@ -1,0 +1,13 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/shared" },
+    { "path": "packages/core" },
+    { "path": "packages/schema" },
+    { "path": "packages/mcp" },
+    { "path": "packages/registry" },
+    { "path": "packages/verify" },
+    { "path": "packages/api" },
+    { "path": "packages/cli" }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "@agentready/web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "AgentReady marketing site + dashboard. Next.js App Router source plus a zero-dependency static server for local demos.",
+  "scripts": {
+    "dev": "node server.mjs",
+    "start": "node server.mjs",
+    "build": "next build",
+    "build:static": "node scripts/build-static.mjs"
+  },
+  "dependencies": {
+    "@agentready/shared": "1.0.0"
+  }
+}

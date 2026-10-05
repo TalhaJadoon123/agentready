@@ -1,0 +1,60 @@
+{
+  "name": "agentready",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AgentReady — SEO for agents. Make your website discoverable and consumable by AI agents.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=20.10.0"
+  },
+  "workspaces": [
+    "packages/shared",
+    "packages/core",
+    "packages/schema",
+    "packages/mcp",
+    "packages/registry",
+    "packages/verify",
+    "packages/api",
+    "packages/cli",
+    "packages/web",
+    "packages/docs",
+    "packages/desktop",
+    "packages/seed"
+  ],
+  "scripts": {
+    "build": "tsc -b tsconfig.build.json",
+    "typecheck": "tsc -b tsconfig.build.json --pretty",
+    "clean": "tsc -b tsconfig.build.json --clean",
+    "rebuild": "tsc -b tsconfig.build.json --force",
+
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+
+    "smoke": "node scripts/smoke.mjs",
+    "smoke:api": "node scripts/smoke-api.mjs",
+    "smoke:stack": "node scripts/smoke-stack.mjs",
+
+    "dev": "node scripts/dev.mjs",
+    "dev:api": "node packages/api/dist/server.js",
+    "dev:web": "node packages/web/server.mjs",
+    "dev:docs": "node packages/docs/server.mjs",
+    "demo": "node packages/seed/src/demo-site.mjs",
+    "desktop": "node packages/desktop/app.mjs",
+    "desktop:headless": "node packages/desktop/app.mjs --headless",
+    "seed": "node packages/seed/src/seed.mjs",
+
+    "cli": "node packages/cli/bin/agentready.mjs",
+    "db:migrate": "node packages/api/dist/migrate.js",
+
+    "docker:up": "docker compose -f docker/docker-compose.yml up -d --build",
+    "docker:down": "docker compose -f docker/docker-compose.yml down",
+    "docker:logs": "docker compose -f docker/docker-compose.yml logs -f"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

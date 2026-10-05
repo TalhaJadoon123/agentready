@@ -1,0 +1,10 @@
+.env
+data/
+out/
+node_modules/
+**/dist/
+**/.next/
+coverage/
+.git/
+README.md
+*.log

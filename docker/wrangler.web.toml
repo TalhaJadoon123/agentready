@@ -1,0 +1,15 @@
+name = "agentready-web"
+main = "packages/web/server.mjs"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# The web server is plain ESM with zero dependencies.
+# Deploy with: npx wrangler deploy --config docker/wrangler.web.toml
+
+[vars]
+NODE_ENV = "production"
+API_BASE = "https://agentready-api.<your-subdomain>.workers.dev"
+SITE_URL = "https://agentready.pages.dev"
+
+[observability]
+enabled = true

@@ -1,0 +1,11 @@
+{
+  "name": "@agentready/docs",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "AgentReady documentation site. Markdown source served by a zero-dependency Node server.",
+  "scripts": {
+    "dev": "node server.mjs",
+    "start": "node server.mjs"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "@agentready/desktop",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "AgentReady Desktop — standalone application window with zero install weight.",
+  "bin": {
+    "agentready-desktop": "./app.mjs"
+  },
+  "scripts": {
+    "start": "node app.mjs",
+    "headless": "node app.mjs --headless"
+  }
+}
