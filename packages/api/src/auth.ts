@@ -123,8 +123,10 @@ export async function authenticate(
 
   let userId: string | undefined;
   let via: Principal['via'] | undefined;
+  let credentialsPresented = false;
 
   if (header.toLowerCase().startsWith('bearer ')) {
+    credentialsPresented = true;
     const token = header.slice(7).trim();
     const payload = await verifyToken(token, secret);
     if (typeof payload?.['sub'] === 'string') {
@@ -132,9 +134,17 @@ export async function authenticate(
       via = 'bearer';
     }
   } else if (apiKey) {
+    credentialsPresented = true;
     // A raw user id may be used as an API key in local development.
     userId = apiKey;
     via = 'api-key';
+  }
+
+  // A caller who presented credentials and got them wrong must be rejected —
+  // never silently downgraded to the shared dev principal. Otherwise an invalid
+  // or tampered token quietly becomes a working session.
+  if (!userId && credentialsPresented) {
+    throw new HttpError(401, 'unauthorized', 'The provided credentials are invalid or expired.');
   }
 
   if (!userId) {

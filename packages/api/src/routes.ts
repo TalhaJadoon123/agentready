@@ -21,7 +21,7 @@ import type {
   Site,
 } from '@agentready/shared';
 import type { RegistryStatus } from '@agentready/shared';
-import { config, normalizeUrl, originOf, scoreToGrade, truncate } from '@agentready/shared';
+import { config, normalizeUrl, originOf, scoreToGrade, truncate, assertFetchable } from '@agentready/shared';
 import { isRegistryName } from '@agentready/registry';
 import { scanSite, enrichTarget, describeEnrichment } from '@agentready/core';
 import { buildSchema, inject, validateSchema, generateLlmsTxt, generateServiceWithPlans } from '@agentready/schema';
@@ -241,6 +241,9 @@ export function registerRoutes(app: App, options: RouteOptions): void {
         ...(Array.isArray(onlyChecks) ? { onlyChecks: onlyChecks as never } : {}),
       });
     } catch (err) {
+      // Let a blocked target surface as 400, not as a scan failure. Wrapping it
+      // in "could not scan" would hide the real reason.
+      if (err instanceof Error && err.name === 'SsrfError') throw err;
       throw new HttpError(502, 'scan_failed', `Could not scan ${url}: ${err instanceof Error ? err.message : String(err)}`);
     }
 
@@ -616,6 +619,10 @@ export function registerRoutes(app: App, options: RouteOptions): void {
     if (!target) throw new HttpError(400, 'invalid_request', 'Provide ?url=https://your-site.com');
 
     const url = requireUrl({ url: target });
+    // Defence in depth: enrichment does not fetch the target today, but this
+    // endpoint takes a caller-supplied URL and must never become a way to
+    // reach internal hosts if that ever changes.
+    await assertFetchable(url);
     const offline = request.query['offline'] === 'true';
 
     const report = await enrichTarget(url, offline ? { offline: true } : {});

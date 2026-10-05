@@ -283,6 +283,18 @@ export function createServer(options: ServerOptions = {}): App {
       else if (!sent) await reply.send();
     } catch (err) {
       if (sent) return;
+
+      // An SSRF refusal is a client error, not a server fault. Mapping it here
+      // means every route that fetches a caller-supplied URL reports 400
+      // consistently instead of leaking a 500.
+      if (err instanceof Error && err.name === 'SsrfError') {
+        logger.debug(`SSRF blocked on ${method} ${request.path}: ${err.message}`);
+        await reply.code(400).send({
+          error: { code: 'blocked_target', message: err.message },
+        });
+        return;
+      }
+
       const status = err instanceof HttpError ? err.status : 500;
       const code = err instanceof HttpError ? err.code : 'internal_error';
       const message = errorMessage(err);

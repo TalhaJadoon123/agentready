@@ -24,6 +24,7 @@ import {
   normalizeUrl,
   originOf,
   serverSlug,
+  SsrfError,
   truncate,
 } from '@agentready/shared';
 import { scanSite, formatScanReport, enrichTarget, describeEnrichment } from '@agentready/core';
@@ -134,10 +135,23 @@ async function cmdScan(positional: string[], values: Values): Promise<number> {
     .map((c) => c.trim())
     .filter(Boolean);
 
-  const result = await scanSite(url, {
-    ...(onlyChecks ? { onlyChecks: onlyChecks as never } : {}),
-    ...(str(values, 'timeout') ? { timeoutMs: Number(str(values, 'timeout')) } : {}),
-  });
+  let result;
+  try {
+    result = await scanSite(url, {
+      ...(onlyChecks ? { onlyChecks: onlyChecks as never } : {}),
+      ...(str(values, 'timeout') ? { timeoutMs: Number(str(values, 'timeout')) } : {}),
+    });
+  } catch (err) {
+    if (err instanceof SsrfError) {
+      log.error(err.message);
+      log.info('');
+      log.info('Scanning private, loopback and metadata addresses is blocked by default.');
+      log.info('If this is your own machine, opt in explicitly:');
+      log.info('  AGENTREADY_ALLOW_PRIVATE_FETCH=true agentready scan ' + url);
+      return 1;
+    }
+    throw err;
+  }
 
   if (flag(values, 'json')) {
     process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);

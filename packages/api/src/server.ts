@@ -23,7 +23,24 @@ export interface BuiltServer {
  * Wire up the app without listening. Tests use this to drive the server on an
  * ephemeral port.
  */
-export async function buildServer(options: { devMode?: boolean; forceFile?: boolean; dbPath?: string } = {}): Promise<BuiltServer> {
+export async function buildServer(
+  options: {
+    devMode?: boolean;
+    forceFile?: boolean;
+    dbPath?: string;
+    /**
+     * Allow scanning private/loopback targets. Off by default.
+     *
+     * Propagated to the scanner via AGENTREADY_ALLOW_PRIVATE_FETCH, which is
+     * the switch the SSRF guard actually reads. Exposed as an option so tests
+     * can pin the behaviour rather than mutate process.env.
+     */
+    allowPrivateFetch?: boolean;
+  } = {},
+): Promise<BuiltServer> {
+  if (options.allowPrivateFetch !== undefined) {
+    process.env['AGENTREADY_ALLOW_PRIVATE_FETCH'] = String(options.allowPrivateFetch);
+  }
   const cfg = config();
   const log = createLogger({ level: cfg.logLevel, scope: 'api' });
 

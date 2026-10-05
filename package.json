@@ -35,6 +35,8 @@
     "smoke": "node scripts/smoke.mjs",
     "smoke:api": "node scripts/smoke-api.mjs",
     "smoke:stack": "node scripts/smoke-stack.mjs",
+    "acceptance": "node scripts/acceptance.mjs",
+    "verify:all": "npm run build && npm test && node scripts/acceptance.mjs",
 
     "dev": "node scripts/dev.mjs",
     "dev:api": "node packages/api/dist/server.js",

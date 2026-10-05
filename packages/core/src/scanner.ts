@@ -10,7 +10,7 @@
  */
 
 import type { ScanResult } from '@agentready/shared';
-import { mapLimit, normalizeUrl, originOf, truncate, createGuardedFetch, assertFetchable } from '@agentready/shared';
+import { mapLimit, normalizeUrl, originOf, truncate, createGuardedFetch, assertFetchable, SsrfError } from '@agentready/shared';
 import { fetchOnce, type FetchLike } from './fetcher.js';
 import { parsePage } from './parser.js';
 import { fetchRobots } from './robots.js';
@@ -62,6 +62,16 @@ async function probeWellKnown(
 export async function scanSite(target: string, options: ScanOptions = {}): Promise<ScanResult> {
   const startedAt = Date.now();
   const scannedAt = new Date().toISOString();
+
+  // Reject non-web schemes explicitly. normalizeUrl force-prepends https:// to
+  // anything without a scheme, which would quietly turn `file:///etc/passwd`
+  // into the nonsense "https://file///etc/passwd" and then fail on DNS — a
+  // confusing error for what is really a bad request.
+  const scheme = /^([a-z][a-z0-9+.-]*):/i.exec(target.trim());
+  if (scheme && !/^https?$/i.test(scheme[1] ?? '')) {
+    throw new SsrfError(`unsupported protocol "${scheme[1]}"`, target);
+  }
+
   const url = normalizeUrl(target);
   const origin = originOf(url);
 

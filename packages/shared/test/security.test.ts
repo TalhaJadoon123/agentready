@@ -293,6 +293,83 @@ describe('API auth', () => {
   });
 });
 
+describe('API blocks private targets end to end', () => {
+  let app: App;
+  let store: Store;
+  let url: string;
+  let dir: string;
+
+  const post = async (p: string, data: unknown) => {
+    const res = await fetch(`${url}${p}`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    let body: unknown;
+    try {
+      body = await res.json();
+    } catch {
+      body = undefined;
+    }
+    return { status: res.status, body: body as Record<string, unknown> };
+  };
+
+  beforeAll(async () => {
+    dir = await mkdtemp(join(tmpdir(), 'ar-ssrf-'));
+    const built = await buildServer({
+      // Dev auth ON so requests get past authentication, private fetch OFF so
+      // the SSRF guard is what refuses them. This isolates the two controls.
+      devMode: true,
+      forceFile: true,
+      dbPath: join(dir, 'db.json'),
+      allowPrivateFetch: false,
+    });
+    app = built.app;
+    store = built.store;
+    url = (await app.listen(0)).url;
+  });
+
+  afterAll(async () => {
+    await app.close();
+    await store.close();
+    await rm(dir, { recursive: true, force: true });
+  });
+
+  it('refuses a metadata address with 400, not 500', async () => {
+    const res = await post('/scan', { url: 'http://169.254.169.254/latest/meta-data/' });
+    expect(res.status).toBe(400);
+    expect((res.body['error'] as Record<string, unknown>)['code']).toBe('blocked_target');
+  });
+
+  it('refuses loopback with 400', async () => {
+    expect((await post('/scan', { url: 'http://127.0.0.1/' })).status).toBe(400);
+    expect((await post('/scan', { url: 'http://localhost:3000/' })).status).toBe(400);
+  });
+
+  it('refuses RFC1918 with 400', async () => {
+    expect((await post('/scan', { url: 'http://10.0.0.1/' })).status).toBe(400);
+    expect((await post('/scan', { url: 'http://192.168.1.1/' })).status).toBe(400);
+    expect((await post('/scan', { url: 'http://172.16.0.1/' })).status).toBe(400);
+  });
+
+  it('refuses a file:// URL with 400', async () => {
+    const res = await post('/scan', { url: 'file:///etc/passwd' });
+    expect(res.status).toBe(400);
+  });
+
+  it('blocks /enrich too, not just /scan', async () => {
+    const res = await fetch(`${url}/enrich?url=http://10.0.0.1/`);
+    expect(res.status).toBe(400);
+  });
+
+  it('never returns 500 for a blocked target', async () => {
+    for (const target of ['http://169.254.169.254/', 'http://127.0.0.1/', 'http://10.0.0.1/', 'file:///etc/passwd']) {
+      const res = await post('/scan', { url: target });
+      expect(res.status).toBe(400);
+    }
+  });
+});
+
 describe('quota cannot be evaded', () => {
   it('enforces the free tier on a file store', async () => {
     const { JsonFileStore, QuotaExceededError } = await import('../../api/dist/store.js');
